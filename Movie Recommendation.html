@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Recommendation</title>
+</head>
+<body>
+  <h2>Movie Recommendation System</h2>
+  <form id="movieForm">
+    <input type="number" placeholder="Your Age" id="age" required />
+    <button type="submit">Get Movies</button>
+  </form>
+  <h3>Recommendations:</h3>
+  <div id="movieResults"></div>
+
+  <script>
+    const movieCategories = [
+      { category: "Kids", minAge: 0, maxAge: 12, movies: ["Frozen", "Toy Story", "Minions"] },
+      { category: "Teens", minAge: 13, maxAge: 17, movies: ["Spider-Man", "Harry Potter"] },
+      { category: "Adults", minAge: 18, maxAge: 60, movies: ["Inception", "Interstellar", "Shawshank Redemption"] },
+      { category: "Seniors", minAge: 61, maxAge: 120, movies: ["The Intern", "The Bucket List"] }
+    ];
+
+    document.getElementById("movieForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const age = +document.getElementById("age").value;
+      const resultDiv = document.getElementById("movieResults");
+
+      if (age < 0 || age > 120) {
+        resultDiv.innerHTML = "<p>Invalid age entered.</p>";
+        return;
+      }
+
+      const category = movieCategories.find(c => age >= c.minAge && age <= c.maxAge);
+
+      if (!category) {
+        resultDiv.innerHTML = "<p>No category found for this age.</p>";
+        return;
+      }
+
+      const selected = category.movies.length >= 2 ? category.movies.slice(0, 2) : category.movies;
+
+      resultDiv.innerHTML = `
+        <p><strong>Category:</strong> ${category.category}</p>
+        <p><strong>Recommended:</strong> ${selected.join(", ")}</p>
+      `;
+
+      this.reset();
+    });
+  </script>
+</body>
+</html>
