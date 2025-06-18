@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Grade Evaluator</title>
+</head>
+<body>
+  <h2>Student Grade Evaluator</h2>
+
+  <form id="gradeForm">
+    <input type="text" placeholder="Name" id="studentName" required />
+    <input type="text" placeholder="Scores (comma-separated)" id="scores" required />
+    <button type="submit">Evaluate</button>
+  </form>
+
+  <h3>Results:</h3>
+  <div id="gradeResults"></div>
+
+  <script>
+    const students = [];
+
+    const totalScore = scores => scores.reduce((a, b) => a + b, 0);
+    const averageScore = scores => totalScore(scores) / scores.length;
+    const getGrade = avg => 
+      avg >= 90 ? 'A+' : 
+      avg >= 80 ? 'A' : 
+      avg >= 70 ? 'B' : 
+      avg >= 60 ? 'C' : 
+      'D';
+    const isFail = scores => scores.some(score => score < 35);
+
+    document.getElementById("gradeForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("studentName").value;
+      const scores = document.getElementById("scores").value.split(",").map(Number);
+
+      const student = { name, scores };
+      students.push(student);
+      evaluateGrades();
+      this.reset();
+    });
+
+    function evaluateGrades() {
+      let result = "";
+
+      students.forEach(student => {
+        const total = totalScore(student.scores);
+        const avg = averageScore(student.scores);
+        const grade = getGrade(avg);
+        const status = isFail(student.scores) ? "❌ Fail" : "✅ Pass";
+
+        result += `<p><strong>${student.name}</strong> - Total: ${total}, Avg: ${avg.toFixed(2)}, Grade: ${grade}, Status: ${status}</p>`;
+      });
+
+      document.getElementById("gradeResults").innerHTML = result;
+    }
+  </script>
+</body>
+</html>

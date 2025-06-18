@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Equb Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- DataTables CSS & JS CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #004aad;
+    }
+
+    .chart-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-controls button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .chart-controls button:hover {
+      background-color: #0056b3;
+    }
+
+    .chart-container {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    canvas#dashboardChart {
+      display: block;
+      margin: 0 auto;
+      max-width: 600px;
+      height: 400px !important;
+    }
+
+    .table-section {
+      margin-top: 40px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .table-section h2 {
+      margin-bottom: 20px;
+      color: #004aad;
+      text-align: center;
+    }
+
+    table.dataTable {
+      width: 100% !important;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 ACT Digital Equb Dashboard</h1>
+
+<div class="chart-controls">
+  <button onclick="showChart('bar')">Bar Chart</button>
+  <button onclick="showChart('line')">Line Chart</button>
+  <button onclick="showChart('pie')">Pie Chart</button>
+  <button onclick="showChart('doughnut')">Doughnut Chart</button>
+  <button onclick="showChart('scatter')">Scatter Chart</button>
+</div>
+
+<div class="chart-container">
+  <canvas id="dashboardChart"></canvas>
+</div>
+
+<div class="table-section">
+  <h2>📋 Equb Member Table</h2>
+  <table id="equbTable" class="display">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Amount (ETB)</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Abel</td><td>Giver</td><td>500</td><td>2025-05-01</td></tr>
+      <tr><td>Selamawit</td><td>Receiver</td><td>4000</td><td>2025-05-10</td></tr>
+      <tr><td>Yared</td><td>Giver</td><td>500</td><td>2025-05-01</td></tr>
+      <tr><td>Hanna</td><td>Giver</td><td>500</td><td>2025-05-01</td></tr>
+      <tr><td>Samuel</td><td>Receiver</td><td>4000</td><td>2025-05-15</td></tr>
+      <tr><td>Ruth</td><td>Giver</td><td>1000</td><td>2025-05-05</td></tr>
+      <tr><td>Mikias</td><td>Receiver</td><td>5000</td><td>2025-05-12</td></tr>
+      <tr><td>Tsion</td><td>Giver</td><td>750</td><td>2025-05-07</td></tr>
+      <tr><td>Dawit</td><td>Giver</td><td>900</td><td>2025-05-06</td></tr>
+      <tr><td>Bethel</td><td>Receiver</td><td>3000</td><td>2025-05-11</td></tr>
+      <tr><td>Kidist</td><td>Giver</td><td>800</td><td>2025-05-09</td></tr>
+      <tr><td>Nati</td><td>Giver</td><td>1200</td><td>2025-05-03</td></tr>
+      <tr><td>Elshaday</td><td>Receiver</td><td>3500</td><td>2025-05-18</td></tr>
+      <tr><td>Liyu</td><td>Giver</td><td>950</td><td>2025-05-08</td></tr>
+      <tr><td>Solomon</td><td>Receiver</td><td>4500</td><td>2025-05-20</td></tr>
+      <tr><td>Rahel</td><td>Giver</td><td>700</td><td>2025-05-04</td></tr>
+      <tr><td>Martha</td><td>Giver</td><td>1100</td><td>2025-05-02</td></tr>
+      <tr><td>Kalkidan</td><td>Receiver</td><td>4200</td><td>2025-05-22</td></tr>
+      <tr><td>Mesfin</td><td>Giver</td><td>650</td><td>2025-05-13</td></tr>
+      <tr><td>Haben</td><td>Receiver</td><td>3900</td><td>2025-05-21</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  let dashboardChart;
+
+  $(document).ready(function () {
+    $('#equbTable').DataTable();
+    showChart('bar');
+  });
+
+  function showChart(type) {
+    const ctx = document.getElementById('dashboardChart').getContext('2d');
+    if (dashboardChart) dashboardChart.destroy();
+
+    if (type === 'bar') {
+      dashboardChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Abel', 'Yared', 'Hanna', 'Ruth', 'Tsion', 'Dawit', 'Kidist', 'Nati', 'Liyu', 'Rahel', 'Martha', 'Mesfin'],
+          datasets: [{
+            label: 'Amount Given (ETB)',
+            data: [500, 500, 500, 1000, 750, 900, 800, 1200, 950, 700, 1100, 650],
+            backgroundColor: '#007bff'
+          }]
+        },
+        options: { plugins: { legend: { display: false } } }
+      });
+    } else if (type === 'line') {
+      dashboardChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+          datasets: [{
+            label: 'Monthly Totals',
+            data: [1000, 2000, 1500, 3000, 2500],
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { plugins: { legend: { position: 'top' } } }
+      });
+    } else if (type === 'pie') {
+      dashboardChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Givers', 'Receivers'],
+          datasets: [{
+            label: 'Roles',
+            data: [12, 8],
+            backgroundColor: ['#007bff', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    } else if (type === 'doughnut') {
+      dashboardChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Givers', 'Receivers'],
+          datasets: [{
+            label: 'Participation Type',
+            data: [12, 8],
+            backgroundColor: ['#007bff', '#28a745']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    } else if (type === 'scatter') {
+      dashboardChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Transactions',
+            data: [
+              { x: 1, y: 500 },
+              { x: 10, y: 4000 },
+              { x: 5, y: 1000 },
+              { x: 7, y: 750 },
+              { x: 12, y: 5000 },
+              { x: 21, y: 3900 }
+            ],
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              title: { display: true, text: 'Day of Month' },
+              min: 1, max: 31
+            },
+            y: {
+              title: { display: true, text: 'Amount (ETB)' },
+              min: 0, max: 6000
+            }
+          }
+        }
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

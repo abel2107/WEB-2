@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+</head>
+<body>
+
+    <div id="quizContainer">
+        <div id="question"></div>
+        <div id="choices"></div>
+        <div id="result"></div>
+        <div id="timeCounter"></div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "What is the capital of Ethiopia?",
+                options: ["Berlin", "Addis Ababa", "Paris", "Lisbon"],
+                answer: "Addis Ababa"
+            },
+            {
+                question: "What is the largest mammal in the world?",
+                options: ["Elephant", "Blue Whale", "Giraffe", "Great White Shark"],
+                answer: "Blue Whale"
+            },
+            {
+                question: "Which element has the chemical symbol 'O'?",
+                options: ["Oxygen", "Gold", "Osmium", "Oganesson"],
+                answer: "Oxygen"
+            }
+        ];
+
+        let quizContainer = document.querySelector('#quizContainer');
+        let questionDiv = document.querySelector('#question');
+        let choiceContainer = document.querySelector('#choices');
+        let result = document.querySelector('#result');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let countDown;
+
+        function loadQuestions() {
+            clearInterval(countDown);
+            clearTimeout(timer);
+
+            if (currentQuestionIndex >= questions.length) {
+                questionDiv.innerHTML = "You have finished";
+                choiceContainer.innerHTML = "";
+                result.innerHTML = `Your score is ${score} / ${questions.length}`;
+                return;
+            }
+
+            questionDiv.innerHTML = questions[currentQuestionIndex].question;
+            choiceContainer.innerHTML = "";
+
+            let choices = questions[currentQuestionIndex].options;
+            let correctChoice = questions[currentQuestionIndex].answer;
+
+            choices.forEach(choice => {
+                let button = document.createElement("button");
+                button.innerHTML = choice;
+                button.style.display = "block"; 
+                button.style.margin = "10px 0";
+
+                button.onclick = () => {
+                    clearInterval(countDown);
+                    clearTimeout(timer);
+
+                    if (choice === correctChoice) {
+                        score++;
+                    }
+
+                    currentQuestionIndex++;
+                    loadQuestions();
+                };
+
+                choiceContainer.appendChild(button);
+            });
+
+            timer = setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestions();
+            }, 10000);
+
+            let timeLeft = 10;
+            let countDownDiv = document.querySelector('#timeCounter');
+            countDownDiv.innerHTML = `Your remaining time is ${timeLeft}`;
+
+            countDown = setInterval(() => {
+                timeLeft--;
+                countDownDiv.innerHTML = `Your remaining time is ${timeLeft}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countDown);
+                    currentQuestionIndex++;
+                    loadQuestions();
+                }
+            }, 1000);
+        }
+
+        loadQuestions();
+    </script>
+</body>
+</html>

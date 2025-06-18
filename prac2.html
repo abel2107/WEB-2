@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Chart from User Data</title>
+</head>
+<body>
+    <h2>Department Data Input</h2>
+    <table id="data-table">
+        <tr>
+            <th>Department</th>
+            <th>Number of Students</th>
+        </tr>
+    </table>
+    <tr>
+        <td><input type="text" id="department" placeholder="Department Name"></td>
+        <td><input type="number" id="number" placeholder="Number of Students"></td>
+    </tr>
+    <button onclick="addData()">Add Data</button>
+    <button onclick="updateChart()">Update Chart</button>
+
+    <h2>Bar Chart</h2>
+    <canvas id="barChart" width="400" height="200"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const departments = [];
+        const numbers = [];
+        let barChart;
+
+        function addData() {
+            const department = document.getElementById('department').value;
+            const number = document.getElementById('number').value;
+
+            if (department && number) {
+                departments.push(department);
+                numbers.push(parseInt(number));
+                document.getElementById('department').value = '';
+                document.getElementById('number').value = '';
+                updateTable();
+            } else {
+                alert('Please fill in both fields');
+            }
+        }
+
+        function updateTable() {
+            const table = document.getElementById('data-table');
+            const row = table.insertRow();
+            row.insertCell().textContent = departments[departments.length - 1];
+            row.insertCell().textContent = numbers[numbers.length - 1];
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            if (barChart) {
+                barChart.destroy();
+            }
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: departments,
+                    datasets: [{
+                        label: 'Number of Students',
+                        data: numbers,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)', // Pink
+                        borderColor: 'rgba(255, 99, 132, 1)', // Dark Pink
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Management System</title>
+</head>
+<body>
+  <h2>Loan Management System</h2>
+
+  <form id="loanForm">
+    <input type="text" placeholder="Name" id="name" required />
+    <input type="number" placeholder="Income" id="income" required />
+    <input type="number" placeholder="Loan Amount" id="loanAmount" required />
+    <input type="number" placeholder="Duration (Years)" id="duration" required />
+    <button type="submit">Apply</button>
+  </form>
+
+  <h3>Results:</h3>
+  <div id="loanResults"></div>
+
+  <script>
+    const applicants = [];
+
+    document.getElementById("loanForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const income = +document.getElementById("income").value;
+      const loanAmount = +document.getElementById("loanAmount").value;
+      const duration = +document.getElementById("duration").value;
+
+      const applicant = { name, income, loanAmount, duration };
+      applicants.push(applicant);
+      processLoans();
+      this.reset();
+    });
+
+    const isEligible = a => a.income >= 30000;
+    const getRate = l => l > 15000 ? 0.1 : 0.07;
+    const getRepayment = (amount, rate, years) => {
+      const total = amount + (amount * rate * years);
+      const monthly = total / (years * 12);
+      return { total, monthly };
+    };
+
+    function processLoans() {
+      let result = "";
+
+      applicants.forEach(app => {
+        if (isEligible(app)) {
+          const rate = getRate(app.loanAmount);
+          const { total, monthly } = getRepayment(app.loanAmount, rate, app.duration);
+          result += `<p><strong>${app.name}</strong> ✅ Approved - Total: $${total.toFixed(2)}, Monthly: $${monthly.toFixed(2)}</p>`;
+        } else {
+          result += `<p><strong>${app.name}</strong> ❌ Rejected due to low income.</p>`;
+        }
+      });
+
+      document.getElementById("loanResults").innerHTML = result;
+    }
+  </script>
+</body>
+</html>

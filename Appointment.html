@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Booking</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container my-5">
+    <h2 class="text-center">Book Your Appointment (Today Only)</h2>
+    <form id="appointmentForm" class="p-4 border rounded">
+      <div class="mb-3">
+        <label>Your Name</label>
+        <input type="text" id="username" required>
+      </div>
+
+      <div class="mb-3">
+        <label>Select Time</label>
+        <input type="time" id="time" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Book Appointment</button>
+    </form>
+
+    <div class="mt-4">
+      <h5>Booked Appointments:</h5>
+      <ul id="appointmentsList"></ul>
+    </div>
+  </div>
+
+  <script>
+    var bookedTimes = {}; // This will keep track of bookings
+    var form = document.getElementById("appointmentForm");
+    var list = document.getElementById("appointmentsList");
+
+    form.onsubmit = function (e) {
+      e.preventDefault(); // Stop the form from submitting
+
+      var name = document.getElementById("username").value.trim();
+      var time = document.getElementById("time").value;
+
+      if (bookedTimes[time]) {
+        alert("This time is already booked by " + bookedTimes[time]);
+        return; // Exit function
+      }
+
+      bookedTimes[time] = name; // Save booking
+
+      var li = document.createElement("li");
+      li.textContent = time + " - " + name;
+      list.appendChild(li); // Add to list
+
+      form.reset(); // Clear the form
+    };
+  </script>
+</body>
+</html>
